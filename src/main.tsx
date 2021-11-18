@@ -1,11 +1,20 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './index.css'
-import { Canvas } from './Canvas'
+import { createGlobalStyle } from 'styled-components'
+
+import { App } from './App'
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    font-family: "Roboto";
+  }
+`
 
 ReactDOM.render(
   <React.StrictMode>
-    <Canvas />
+    <GlobalStyle />
+    <App />
   </React.StrictMode>,
   document.getElementById('root'),
 )

@@ -3,11 +3,13 @@ import styled from 'styled-components'
 
 import { Point } from './components/Point'
 import { Coordinates } from './types'
+import { getPolygonArea, getPolygonCenter, getRadiusByArea } from './utils'
+import { Controls } from './components/Controls'
 
 const Container = styled.div`
-  max-width: 1200px;
+  position: relative;
+  width: 100vw;
   height: 100vh;
-  margin: 0 auto;
 `
 const Svg = styled.svg`
   position: relative;
@@ -27,7 +29,7 @@ const Parallelogram = styled.polygon`
   pointer-events: none;
 `
 
-export const Canvas = memo(() => {
+export const App = memo(() => {
   const [firstPoint, setFirstPoint] = useState<Coordinates>()
   const [secondPoint, setSecondPoint] = useState<Coordinates>()
   const [thirdPoint, setThirdPoint] = useState<Coordinates>()
@@ -36,12 +38,12 @@ export const Canvas = memo(() => {
 
   const containerRef = useRef<SVGSVGElement>(null)
 
-  useEffect(() => {
-    setOffsetCanvas({
-      x: containerRef.current?.getBoundingClientRect().x || 0,
-      y: containerRef.current?.getBoundingClientRect().y || 0,
-    })
-  }, [containerRef])
+  const points = [firstPoint!, secondPoint!, thirdPoint!, forthPoint!]
+  const isAllPointsSet = firstPoint && secondPoint && thirdPoint && forthPoint
+
+  const area = isAllPointsSet ? getPolygonArea(points) : 0
+  const center = isAllPointsSet ? getPolygonCenter(points) : { cx: 0, cy: 0 }
+  const radius = isAllPointsSet ? getRadiusByArea(area) : 0
 
   const onClick = (e: MouseEvent<SVGSVGElement>) => {
     if (!firstPoint) {
@@ -64,46 +66,19 @@ export const Canvas = memo(() => {
     }
   }
 
-  const getCenter = () => {
-    const points = [
-      firstPoint,
-      secondPoint,
-      thirdPoint,
-      forthPoint,
-    ] as Coordinates[]
-    const x = points.map((point) => point.x)
-    const y = points.map((point) => point.y)
-    const cx = (Math.min(...x) + Math.max(...x)) / 2
-    const cy = (Math.min(...y) + Math.max(...y)) / 2
-    return { cx, cy }
+  const reset = () => {
+    setFirstPoint(undefined)
+    setSecondPoint(undefined)
+    setThirdPoint(undefined)
+    setForthPoint(undefined)
   }
 
-  const getArea = () => {
-    const points = [
-      firstPoint,
-      secondPoint,
-      thirdPoint,
-      forthPoint,
-    ] as Coordinates[]
-    const area = points.reduce((total, point, index) => {
-      const nextIndex = index == points.length - 1 ? 0 : index + 1
-      const addX = point.x
-      const addY = points[nextIndex].y
-      const subX = points[nextIndex].x
-      const subY = point.y
-
-      total += addX * addY * 0.5
-      total -= subX * subY * 0.5
-      return total
-    }, 0)
-
-    return Math.abs(area)
-  }
-
-  const getCircleRadius = () => {
-    const area = getArea()
-    return Math.sqrt(area / Math.PI)
-  }
+  useEffect(() => {
+    setOffsetCanvas({
+      x: containerRef.current?.getBoundingClientRect().x || 0,
+      y: containerRef.current?.getBoundingClientRect().y || 0,
+    })
+  }, [containerRef])
 
   useEffect(() => {
     if (firstPoint && secondPoint && thirdPoint) {
@@ -116,6 +91,7 @@ export const Canvas = memo(() => {
 
   return (
     <Container>
+      <Controls reset={reset} />
       <Svg onClick={onClick} ref={containerRef}>
         {firstPoint && (
           <Point
@@ -123,6 +99,7 @@ export const Canvas = memo(() => {
             cy={firstPoint.y}
             setPoint={setFirstPoint}
             offsetCanvas={offsetCanvas}
+            containerRef={containerRef}
           />
         )}
         {secondPoint && (
@@ -131,6 +108,7 @@ export const Canvas = memo(() => {
             cy={secondPoint.y}
             setPoint={setSecondPoint}
             offsetCanvas={offsetCanvas}
+            containerRef={containerRef}
           />
         )}
         {thirdPoint && (
@@ -139,20 +117,20 @@ export const Canvas = memo(() => {
             cy={thirdPoint.y}
             setPoint={setThirdPoint}
             offsetCanvas={offsetCanvas}
-          />
-        )}
-        {forthPoint && (
-          <Parallelogram
-            points={`${firstPoint?.x},${firstPoint?.y} ${secondPoint?.x},${secondPoint?.y} ${thirdPoint?.x},${thirdPoint?.y} ${forthPoint?.x},${forthPoint?.y}`}
+            containerRef={containerRef}
           />
         )}
 
         {forthPoint && (
-          <Circle
-            cx={getCenter().cx}
-            cy={getCenter().cy}
-            r={getCircleRadius()}
-          />
+          <>
+            <text x={center.cx} y={center.cy} textAnchor="middle">
+              {area}
+            </text>
+            <Parallelogram
+              points={`${firstPoint?.x},${firstPoint?.y} ${secondPoint?.x},${secondPoint?.y} ${thirdPoint?.x},${thirdPoint?.y} ${forthPoint?.x},${forthPoint?.y}`}
+            />
+            <Circle cx={center.cx} cy={center.cy} r={radius} />
+          </>
         )}
       </Svg>
     </Container>

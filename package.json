@@ -1,23 +1,58 @@
 {
   "name": "shapes-app",
   "version": "0.0.0",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test": "jest",
+    "tsc": "tsc",
+    "lint": "eslint \"src/**\"",
+    "lint:fix": "eslint \"src/**\" --fix"
   },
   "dependencies": {
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
+    "@babel/preset-env": "^7.16.4",
+    "@babel/preset-react": "^7.16.0",
+    "@babel/preset-typescript": "^7.16.0",
+    "@testing-library/react": "^12.1.2",
+    "@types/jest": "^27.0.2",
+    "@types/react": "^17.0.35",
+    "@types/react-dom": "^17.0.11",
     "@types/styled-components": "^5.1.15",
-    "@vitejs/plugin-react": "^1.0.0",
+    "@typescript-eslint/eslint-plugin": "5.4.0",
+    "@typescript-eslint/parser": "5.4.0",
+    "@vitejs/plugin-react": "^1.0.9",
+    "babel-eslint": "10.1.0",
+    "babel-jest": "^27.3.1",
+    "eslint": "8.2.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "8.0.3",
+    "eslint-plugin-import": "2.25.3",
+    "eslint-plugin-jsx-a11y": "6.5.1",
+    "eslint-plugin-react": "7.27.0",
+    "eslint-plugin-react-hooks": "4.3.0",
+    "jest": "^27.3.1",
     "prettier": "^2.4.1",
-    "typescript": "^4.3.2",
-    "vite": "^2.6.4"
+    "react-test-renderer": "^17.0.2",
+    "typescript": "^4.4.4",
+    "vite": "^2.6.14"
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "presets": [
+          "@babel/preset-typescript",
+          "@babel/preset-env",
+          "@babel/preset-react"
+        ]
+      }
+    }
   }
 }
