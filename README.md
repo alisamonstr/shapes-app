@@ -1,3 +1,10 @@
+## How to run
+```bash
+yarn
+yarn start
+```
+Open [http://localhost:3000](http://localhost:3000)
+
 ## Implementation details
 
 For this task, I only used 3 new dependencies:
